@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Valentine Week</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family: "Poppins", Arial, sans-serif;
+  text-align:center;
+  transition: all 0.6s ease;
+  overflow:hidden;
+}
+
+/* -------- FLOATING ITEMS -------- */
+.floater {
+  position: absolute;
+  font-size: 30px;
+  animation: floatUp 6s linear infinite;
+  opacity: 0.7;
+  display: none;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(1); opacity: 0.6; }
+  100% { transform: translateY(-10vh) scale(1.3); opacity: 0; }
+}
+
+/* Hearts only on Rose & Valentine */
+.rose .heart,
+.valentine .heart {
+  display: block;
+}
+
+/* Day-specific emojis */
+.rose .rose-icon { display: block; }
+.propose .propose-icon { display: block; }
+.chocolate .choco-icon { display: block; }
+.teddy .teddy-icon { display: block; }
+.promise .promise-icon { display: block; }
+.hug .hug-icon { display: block; }
+.kiss .kiss-icon { display: block; }
+.valentine .val-icon { display: block; }
+
+/* ---------- DAY THEMES ---------- */
+.rose{ background: linear-gradient(180deg,#ffe3e8,#fff); }
+.propose{ background: linear-gradient(180deg,#ffd9ff,#fff); }
+.chocolate{ background: linear-gradient(180deg,#f3d7c4,#fff); }
+.teddy{ background: linear-gradient(180deg,#ffd1b3,#fff); }
+.promise{ background: linear-gradient(180deg,#e6f2ff,#fff); }
+.hug{ background: linear-gradient(180deg,#d9f7ff,#fff); }
+.kiss{ background: linear-gradient(180deg,#ffe6ff,#fff); }
+.valentine{ background: linear-gradient(180deg,#ffe6ef,#ffffff); }
+
+/* ---------- BALLOONS (VALENTINE ONLY) ---------- */
+.balloon {
+  position: absolute;
+  width: 60px;
+  height: 80px;
+  border-radius: 50% 50% 45% 45%;
+  animation: drift 7s ease-in-out infinite;
+  display:none;
+}
+
+.balloon:after {
+  content: "";
+  position: absolute;
+  bottom: -40px;
+  left: 28px;
+  width: 2px;
+  height: 40px;
+  background: #ccc;
+}
+
+@keyframes drift {
+  0% { transform: translateY(100vh) translateX(0); }
+  50% { transform: translateY(40vh) translateX(30px); }
+  100% { transform: translateY(-10vh) translateX(-20px); }
+}
+
+.valentine .balloon{
+  display:block;
+}
+
+/* ---------- CENTER CARD ---------- */
+#card {
+  margin: 60px auto;
+  width: min(420px, 90%);
+  padding: 25px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+  border: 2px solid #ffc0d8;
+  position: relative;
+  z-index: 5;
+}
+
+/* Buttons */
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  margin: 10px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+#yesBtn {
+  background: #ff4fa3;
+  color: white;
+}
+
+#noBtn {
+  background: #ffd1e5;
+  color: #b0005a;
+  position: absolute;
+}
+
+/* Runaway container */
+#container {
+  position: relative;
+  height: 260px;
+}
+
+/* Confetti canvas */
+#confetti{
+  position:fixed;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  display:none;
+}
+</style>
+</head>
+
+<body class="rose">
+
+<!-- Floating HEARTS -->
+<div class="heart floater" style="left:10%; animation-delay:0s">💗</div>
+<div class="heart floater" style="left:30%; animation-delay:2s">💕</div>
+<div class="heart floater" style="left:50%; animation-delay:1s">💖</div>
+<div class="heart floater" style="left:70%; animation-delay:3s">❤️</div>
+
+<!-- DAY-SPECIFIC EMOJIS -->
+<div class="floater rose-icon" style="left:20%">🌹</div>
+<div class="floater propose-icon" style="left:40%">💍</div>
+<div class="floater choco-icon" style="left:60%">🍫</div>
+<div class="floater teddy-icon" style="left:25%">🧸</div>
+<div class="floater promise-icon" style="left:55%">🤞</div>
+<div class="floater hug-icon" style="left:35%">🫂</div>
+<div class="floater kiss-icon" style="left:65%">💋</div>
+<div class="floater val-icon" style="left:50%">❤️</div>
+
+<!-- Balloons (only on Valentine) -->
+<div class="balloon" style="left:5%; background:#ff9acb;"></div>
+<div class="balloon" style="left:80%; background:#ffc0e1;"></div>
+
+<canvas id="confetti"></canvas>
+
+<div id="card">
+<h2 id="mainTitle">💖 Valentine Week 💖</h2>
+<h3 id="countdown"></h3>
+<h3 id="todayLabel">Today: </h3>
+
+<div id="buttonsContainer">
+<button id="roseBtn" onclick="openDay('rose')" disabled>🌹 Rose Day</button>
+<button id="proposeBtn" onclick="openDay('propose')" disabled>💍 Propose Day</button>
+<button id="chocoBtn" onclick="openDay('chocolate')" disabled>🍫 Chocolate Day</button>
+<button id="teddyBtn" onclick="openDay('teddy')" disabled>🧸 Teddy Day</button>
+<button id="promiseBtn" onclick="openDay('promise')" disabled>🤞 Promise Day</button>
+<button id="hugBtn" onclick="openDay('hug')" disabled>🫂 Hug Day</button>
+<button id="kissBtn" onclick="openDay('kiss')" disabled>💋 Kiss Day</button>
+<button id="valBtn" onclick="openValentine()" disabled>❤️ Valentine Day</button>
+</div>
+
+<div id="message"></div>
+
+<!-- ===== ORIGINAL VALENTINE PAGE ===== -->
+<div id="valentinePage" style="display:none; margin-top:20px;">
+  <h2>💘 Sujata, will you be my Valentine? 💘</h2>
+
+
+  <div id="container">
+    <button id="yesBtn" onclick="sayYes()">Yes 😊</button>
+    <button id="noBtn" onmouseover="moveButton()">No 😢</button>
+  </div>
+
+  <h3 id="response" style="color:#ff4fa3;"></h3>
+</div>
+</div>
+
+<audio id="music"></audio>
+
+<script>
+const TEST_MODE = false;
+const TEST_DAY  = "rose";
+
+const days = [
+  { key:"rose", date: new Date(new Date().getFullYear(), 1, 7) },
+  { key:"propose", date: new Date(new Date().getFullYear(), 1, 8) },
+  { key:"chocolate", date: new Date(new Date().getFullYear(), 1, 9) },
+  { key:"teddy", date: new Date(new Date().getFullYear(), 1, 10) },
+  { key:"promise", date: new Date(new Date().getFullYear(), 1, 11) },
+  { key:"hug", date: new Date(new Date().getFullYear(), 1, 12) },
+  { key:"kiss", date: new Date(new Date().getFullYear(), 1, 13) },
+  { key:"valentine", date: new Date(new Date().getFullYear(), 1, 14) }
+];
+
+const quotes = {
+  rose: "🌹 Like a rose unfolding at dawn, my heart blooms quietly for you.",
+  propose: "💍 In the silence between heartbeats, I gather courage to choose you forever.",
+  chocolate: "🍫 Love melts like warm chocolate — slow, deep, and impossible to resist.",
+  teddy: "🧸 Soft as a teddy, my love wraps around you in gentle warmth.",
+  promise: "🤞 I write my promise not in words, but in every breath I take for you.",
+  hug: "🫂 In your embrace, the world disappears and only love remains.",
+  kiss: "💋 A single kiss whispers what a thousand words cannot say.",
+  valentine: "❤️ Love is a poem written by two hearts beating as one."
+};
+
+const musicMap = {
+  rose: "https://www.bensound.com/bensound-music/bensound-love.mp3",
+  propose: "https://www.bensound.com/bensound-music/bensound-romantic.mp3",
+  chocolate: "https://www.bensound.com/bensound-music/bensound-sweet.mp3",
+  teddy: "https://www.bensound.com/bensound-music/bensound-dreams.mp3",
+  promise: "https://www.bensound.com/bensound-music/bensound-relaxing.mp3",
+  hug: "https://www.bensound.com/bensound-music/bensound-tenderness.mp3",
+  kiss: "https://www.bensound.com/bensound-music/bensound-betterdays.mp3",
+  valentine: "https://www.bensound.com/bensound-music/bensound-love.mp3"
+};
+
+function getTodayKey(){
+  if(TEST_MODE) return TEST_DAY;
+  const today = new Date();
+  for(let d of days){
+    if(d.date.toDateString() === today.toDateString()){
+      return d.key;
+    }
+  }
+  return null;
+}
+
+function getNextDay(){
+  const now = new Date();
+  for(let d of days){
+    if(d.date > now){
+      return d;
+    }
+  }
+  return null;
+}
+
+function showTodayOnly(){
+  const todayKey = getTodayKey();
+  if(!todayKey) return;
+
+  const today = new Date();
+  const firstDay = days[0].date;
+
+  if (today >= firstDay || TEST_MODE) {
+    document.getElementById("buttonsContainer").style.display="none";
+  }
+
+  document.getElementById("todayLabel").innerText =
+     "Today: " + todayKey.toUpperCase() + " DAY 💕";
+
+  playMusic(todayKey);
+
+  if(todayKey === "valentine"){
+    openValentine();
+  } else {
+    openDay(todayKey);
+  }
+}
+showTodayOnly();
+
+function updateCountdown(){
+  const next = getNextDay();
+
+  if(!next){
+    document.getElementById("countdown").innerText =
+      "Happy Valentine's Day ❤️";
+    return;
+  }
+
+  const hours = Math.floor((next.date - new Date())/(1000*60*60));
+  document.getElementById("countdown").innerText =
+   `${hours} hours to ${next.key.toUpperCase()} DAY 💕`;
+}
+setInterval(updateCountdown,1000);
+
+function openDay(day){
+  document.body.className = "";
+  document.body.classList.add(day);
+  document.getElementById("valentinePage").style.display="none";
+  document.getElementById("message").innerText = quotes[day];
+}
+
+function openValentine(){
+  document.body.className = "";
+  document.body.classList.add("valentine");
+
+  document.getElementById("mainTitle").innerText = "💖 Valentine Day 💖";
+  document.getElementById("countdown").innerText = "";
+  document.getElementById("message").innerText = "";
+
+  document.getElementById("valentinePage").style.display="block";
+}
+
+function moveButton() {
+  const btn = document.getElementById("noBtn");
+  const container = document.getElementById("container");
+
+  const x = Math.random() * (container.clientWidth - 120);
+  const y = Math.random() * (container.clientHeight - 60);
+
+  btn.style.left = x + "px";
+  btn.style.top = y + "px";
+}
+
+function sayYes(){
+  document.getElementById("mainTitle").innerText = "";
+  document.getElementById("countdown").innerText = "";
+  document.getElementById("todayLabel").innerText = "";
+  document.getElementById("message").innerText = "";
+
+  document.getElementById("container").innerHTML = "";
+  document.getElementById("container").style.height = "auto";
+
+  document.getElementById("response").innerHTML =
+     "Baba, tumne haan keh kar meri duniya roshan kar di —<br>" +
+  "jaise chaand ne andheri raat mein chamak bhar di. ❤️🌹";
+
+  startConfetti();
+}
+
+function playMusic(day){
+  const audio = document.getElementById("music");
+  audio.src = musicMap[day];
+  audio.loop = true;
+  audio.volume = 0.5;
+  audio.play().catch(()=>console.log("Autoplay blocked"));
+}
+
+document.addEventListener("click", () => {
+  const audio = document.getElementById("music");
+  if (audio.paused) audio.play();
+}, { once: true });
+
+function startConfetti(){
+  const canvas = document.getElementById("confetti");
+  const ctx = canvas.getContext("2d");
+  canvas.style.display="block";
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particles = [];
+
+  for(let i=0;i<200;i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*5+2,
+      vx: Math.random()*4-2,
+      vy: Math.random()*4+2,
+      c: `hsl(${Math.random()*360},100%,70%)`
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(let p of particles){
+      ctx.fillStyle = p.c;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      if(p.y>canvas.height) p.y = 0;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  setTimeout(()=>canvas.style.display="none", 4000);
+}
+</script>
+</body>
+</html>
