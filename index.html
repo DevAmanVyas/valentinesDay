@@ -11,15 +11,37 @@ body{
   transition: all 0.6s ease;
   overflow:hidden;
 }
+
 #footer {
   position: fixed;
-  bottom: 10px;
+  bottom: 12px;
   width: 100%;
   text-align: center;
   font-size: 14px;
   color: #b0005a;
   font-style: italic;
   z-index: 10;
+}
+
+/* ---- Pulsing heart ---- */
+.pulse-heart {
+  display: inline-block;
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+/* Heart animation */
+@keyframes pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* ---- MOBILE FIX: push footer up when screen is small ---- */
+@media (max-width: 600px) {
+  #footer {
+    bottom: 45px;   /* moves it up so it won’t overlap buttons */
+    font-size: 13px;
+  }
 }
 
 /* -------- FLOATING ITEMS -------- */
@@ -396,10 +418,10 @@ function startConfetti(){
   setTimeout(()=>canvas.style.display="none", 4000);
 }
 </script>
-  <div id="footer">
-  Created With ❤️ By Aman (YOUR BABA)
+ <div id="footer">
+  Created With Love By<span class="pulse-heart">❤️</span> Aman - Your Baba
 </div>
+
 
 </body>
 </html>
-
